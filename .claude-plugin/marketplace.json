@@ -1,9 +1,10 @@
 {
   "name": "one1zero1one",
-  "description": "Plugins by one1zero1one",
   "owner": {
-    "name": "Dani Radu",
-    "url": "https://github.com/one1zero1one"
+    "name": "Dani Radu"
+  },
+  "metadata": {
+    "description": "Plugins by one1zero1one"
   },
   "plugins": [
     {
