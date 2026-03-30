@@ -61,21 +61,30 @@ elif [ -f "$REMARKABLE_LOOP_HOME/bin/rmapi" ]; then
     echo "  rmapi already at $REMARKABLE_LOOP_HOME/bin/rmapi"
 else
     ARCH="$(uname -m)"
-    case "$ARCH" in
-        x86_64|amd64) RMAPI_ARCH="amd64" ;;
-        aarch64|arm64) RMAPI_ARCH="arm64" ;;
-        *) echo "  Error: Unsupported architecture $ARCH"; exit 1 ;;
-    esac
+    TMPDIR=$(mktemp -d)
 
-    RMAPI_URL="https://github.com/ddvk/rmapi/releases/download/${RMAPI_VERSION}/rmapi-linux-${RMAPI_ARCH}.tar.gz"
     if [ "$OS" = "Darwin" ]; then
-        RMAPI_URL="https://github.com/ddvk/rmapi/releases/download/${RMAPI_VERSION}/rmapi-macos-${RMAPI_ARCH}.tar.gz"
+        case "$ARCH" in
+            x86_64|amd64) RMAPI_LABEL="macos-intel" ;;
+            aarch64|arm64) RMAPI_LABEL="macos-arm64" ;;
+            *) echo "  Error: Unsupported architecture $ARCH"; exit 1 ;;
+        esac
+        RMAPI_URL="https://github.com/ddvk/rmapi/releases/download/${RMAPI_VERSION}/rmapi-${RMAPI_LABEL}.zip"
+        echo "  Downloading rmapi ${RMAPI_VERSION}..."
+        curl -fsSL "$RMAPI_URL" -o "$TMPDIR/rmapi.zip"
+        unzip -q "$TMPDIR/rmapi.zip" -d "$TMPDIR"
+    else
+        case "$ARCH" in
+            x86_64|amd64) RMAPI_LABEL="linux-amd64" ;;
+            aarch64|arm64) RMAPI_LABEL="linux-arm64" ;;
+            *) echo "  Error: Unsupported architecture $ARCH"; exit 1 ;;
+        esac
+        RMAPI_URL="https://github.com/ddvk/rmapi/releases/download/${RMAPI_VERSION}/rmapi-${RMAPI_LABEL}.tar.gz"
+        echo "  Downloading rmapi ${RMAPI_VERSION}..."
+        curl -fsSL "$RMAPI_URL" -o "$TMPDIR/rmapi.tar.gz"
+        tar xzf "$TMPDIR/rmapi.tar.gz" -C "$TMPDIR"
     fi
 
-    echo "  Downloading rmapi ${RMAPI_VERSION}..."
-    TMPDIR=$(mktemp -d)
-    curl -fsSL "$RMAPI_URL" -o "$TMPDIR/rmapi.tar.gz"
-    tar xzf "$TMPDIR/rmapi.tar.gz" -C "$TMPDIR"
     mv "$TMPDIR/rmapi" "$REMARKABLE_LOOP_HOME/bin/rmapi"
     chmod +x "$REMARKABLE_LOOP_HOME/bin/rmapi"
     rm -rf "$TMPDIR"
