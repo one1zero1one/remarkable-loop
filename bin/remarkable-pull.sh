@@ -54,7 +54,7 @@ fi
 
 # Render annotations onto base PDF
 echo "Rendering annotations..."
-python3 "$RENDERER" "$RAW_FILE" "$OUTPUT_DIR/${DOC_NAME}.pdf"
+uv run "$RENDERER" "$RAW_FILE" "$OUTPUT_DIR/${DOC_NAME}.pdf"
 
 # Clean up
 rm -f "$RAW_FILE"

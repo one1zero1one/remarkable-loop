@@ -6,6 +6,8 @@ Claude writes markdown → converts to PDF → pushes to reMarkable Cloud → hu
 
 ## Setup
 
+Requires [uv](https://docs.astral.sh/uv/). Python deps are managed automatically via inline script metadata (PEP 723).
+
 ```bash
 ./install.sh
 ```
@@ -17,7 +19,7 @@ Claude writes markdown → converts to PDF → pushes to reMarkable Cloud → hu
 RMAPI_CONFIG=~/.remarkable-loop/.rmapi rmapi ls /Plans/
 
 # Check deps
-which rmapi && which weasyprint && python3 -c "import rmscene; print('ok')"
+which uv && which rmapi && which pdftoppm
 
 # List local PDFs
 ls ~/.remarkable-loop/plans/

@@ -30,11 +30,13 @@ cd remarkable-loop
 ./install.sh
 ```
 
+Requires [uv](https://docs.astral.sh/uv/) (Python deps are managed automatically via inline script metadata).
+
 The installer:
 - Creates `~/.remarkable-loop/` with config and directories
 - Downloads the [rmapi](https://github.com/ddvk/rmapi) binary (reMarkable Cloud CLI)
-- Installs Python dependencies (weasyprint, rmscene, reportlab)
-- Detects your OS (macOS, Alpine, Debian/Ubuntu)
+- Installs [poppler](https://poppler.freedesktop.org/) for PDF-to-image rendering
+- Python dependencies (weasyprint, rmscene, reportlab) are resolved on-demand by `uv` — no pip or venv needed
 
 ### One-time auth
 
@@ -89,12 +91,13 @@ export REMARKABLE_LOOP_HOME=/custom/path
 
 | Tool | Purpose | Install |
 |------|---------|---------|
+| [uv](https://docs.astral.sh/uv/) | Python package runner | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | [rmapi](https://github.com/ddvk/rmapi) | reMarkable Cloud CLI | `install.sh` handles this |
-| [weasyprint](https://weasyprint.org) | HTML/CSS to PDF | brew/apt/apk |
-| [rmscene](https://github.com/ricklupton/rmscene) | Read reMarkable v6 annotations | pip |
-| [reportlab](https://pypi.org/project/reportlab/) | Render annotations onto PDF | pip |
-| [pdfrw](https://pypi.org/project/pdfrw/) | Merge annotation overlay with base PDF | pip |
-| pdftoppm | Render PDF pages to PNG for vision | poppler-utils |
+| [weasyprint](https://weasyprint.org) | HTML/CSS to PDF | managed by uv |
+| [rmscene](https://github.com/ricklupton/rmscene) | Read reMarkable v6 annotations | managed by uv |
+| [reportlab](https://pypi.org/project/reportlab/) | Render annotations onto PDF | managed by uv |
+| [pdfrw](https://pypi.org/project/pdfrw/) | Merge annotation overlay with base PDF | managed by uv |
+| pdftoppm | Render PDF pages to PNG for vision | poppler-utils (brew/apt) |
 
 ## How annotations work
 

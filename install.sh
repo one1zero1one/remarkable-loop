@@ -1,6 +1,7 @@
 #!/bin/sh
 # remarkable-loop installer
-# Sets up dependencies, directories, and rmapi binary.
+# Sets up directories, config, rmapi binary, and poppler.
+# Python deps are managed by uv via inline script metadata — no pip needed.
 # Run from the repo root: ./install.sh
 
 set -e
@@ -24,58 +25,32 @@ else
     echo "[2/5] Config already exists, skipping."
 fi
 
-# 3. Install system dependencies
-echo "[3/5] Checking system dependencies..."
+# 3. Check prerequisites
+echo "[3/5] Checking prerequisites..."
 
-install_python_deps() {
-    # pip deps needed: rmscene, reportlab, pdfrw, weasyprint (or system package)
-    local MISSING=""
-    python3 -c "import rmscene" 2>/dev/null || MISSING="$MISSING rmscene"
-    python3 -c "import reportlab" 2>/dev/null || MISSING="$MISSING reportlab"
-    python3 -c "import pdfrw" 2>/dev/null || MISSING="$MISSING pdfrw"
-    python3 -c "import markdown" 2>/dev/null || MISSING="$MISSING markdown"
-
-    if [ -n "$MISSING" ]; then
-        echo "  Installing Python packages:$MISSING"
-        pip3 install --break-system-packages $MISSING 2>/dev/null || \
-        pip3 install $MISSING 2>/dev/null || \
-        echo "  Warning: Failed to install some Python packages. Install manually: pip install$MISSING"
-    fi
-}
-
-OS="$(uname -s)"
-if [ "$OS" = "Darwin" ]; then
-    # macOS
-    if command -v brew >/dev/null 2>&1; then
-        command -v weasyprint >/dev/null 2>&1 || { echo "  Installing weasyprint..."; brew install weasyprint; }
-        command -v pdftoppm >/dev/null 2>&1 || { echo "  Installing poppler..."; brew install poppler; }
-    else
-        echo "  Warning: Homebrew not found. Install weasyprint and poppler manually."
-    fi
-    install_python_deps
-
-elif [ "$OS" = "Linux" ]; then
-    if command -v apk >/dev/null 2>&1; then
-        # Alpine
-        for pkg in weasyprint py3-markdown py3-pygments font-noto poppler-utils cairo-dev freetype-dev; do
-            apk info -e "$pkg" >/dev/null 2>&1 || { echo "  Installing $pkg..."; apk add --no-cache "$pkg" 2>/dev/null; }
-        done
-        install_python_deps
-    elif command -v apt-get >/dev/null 2>&1; then
-        # Debian/Ubuntu
-        dpkg -l weasyprint >/dev/null 2>&1 || { echo "  Installing weasyprint..."; sudo apt-get install -y weasyprint; }
-        dpkg -l poppler-utils >/dev/null 2>&1 || { echo "  Installing poppler-utils..."; sudo apt-get install -y poppler-utils; }
-        dpkg -l fonts-noto >/dev/null 2>&1 || { echo "  Installing fonts-noto..."; sudo apt-get install -y fonts-noto; }
-        install_python_deps
-    else
-        echo "  Unknown Linux distro. Install manually: weasyprint, poppler-utils, fonts-noto"
-        install_python_deps
-    fi
+# uv is required — Python deps are declared inline in each script
+if ! command -v uv >/dev/null 2>&1; then
+    echo "  Error: uv is required but not found."
+    echo "  Install: curl -LsSf https://astral.sh/uv/install.sh | sh"
+    exit 1
 fi
+echo "  uv: $(uv --version)"
 
-# Check weasyprint
-if ! command -v weasyprint >/dev/null 2>&1 && ! python3 -c "from weasyprint import HTML" 2>/dev/null; then
-    echo "  Warning: weasyprint not found. PDF conversion won't work."
+# poppler (pdftoppm) for rendering annotation pages to images
+OS="$(uname -s)"
+if ! command -v pdftoppm >/dev/null 2>&1; then
+    if [ "$OS" = "Darwin" ] && command -v brew >/dev/null 2>&1; then
+        echo "  Installing poppler..."
+        brew install poppler
+    elif [ "$OS" = "Linux" ] && command -v apt-get >/dev/null 2>&1; then
+        echo "  Installing poppler-utils..."
+        sudo apt-get install -y poppler-utils
+    elif [ "$OS" = "Linux" ] && command -v apk >/dev/null 2>&1; then
+        echo "  Installing poppler-utils..."
+        apk add --no-cache poppler-utils
+    else
+        echo "  Warning: pdftoppm (poppler) not found. Install it manually for annotation rendering."
+    fi
 fi
 
 # 4. Install rmapi
