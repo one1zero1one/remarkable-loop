@@ -1,0 +1,18 @@
+# remarkable-loop configuration
+# Copy to ~/.remarkable-loop/config.yaml and adjust if needed.
+# Most users won't need to change anything — defaults work out of the box.
+
+# Where to find source documents (relative to project root).
+# These match the superpowers skill convention.
+sources:
+  specs: docs/superpowers/specs/     # YYYY-MM-DD-{topic}-design.md
+  plans: docs/superpowers/plans/     # YYYY-MM-DD-{topic}.md
+
+# reMarkable Cloud folder where documents appear on the tablet
+remote_folder: /Plans
+
+# Versioning
+versioning:
+  suffix: "-v{n}"      # topic-design.md -> topic-design-v2.md
+  on_pull: overwrite    # annotated PDF replaces clean PDF (markdown is source of truth)
+  ask_cleanup: true     # after pushing v2, ask to remove v1

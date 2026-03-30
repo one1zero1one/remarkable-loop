@@ -1,0 +1,16 @@
+{
+  "name": "one1zero1one",
+  "description": "Plugins by one1zero1one",
+  "owner": {
+    "name": "Dani Radu",
+    "url": "https://github.com/one1zero1one"
+  },
+  "plugins": [
+    {
+      "name": "remarkable-loop",
+      "description": "Feedback loop between Claude Code and reMarkable tablet",
+      "version": "1.0.0",
+      "source": "./"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "remarkable-loop",
+  "description": "Feedback loop between Claude Code and reMarkable tablet. Push markdown as PDF, annotate on tablet, pull annotations back with vision.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Dani Radu",
+    "url": "https://github.com/one1zero1one"
+  },
+  "repository": "https://github.com/one1zero1one/remarkable-loop",
+  "license": "MIT",
+  "keywords": ["remarkable", "pdf", "annotations", "feedback-loop", "tablet"]
+}

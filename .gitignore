@@ -1,0 +1,18 @@
+# Auth tokens
+.rmapi
+*.token
+*.key
+*.secret
+
+# Generated PDFs and temp files
+*.pdf
+/plans/
+/raw/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
